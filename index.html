@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PKL Tracker | Kehadiran, Keuangan & Jurnal </title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- jsPDF for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <h1>PKL Tracker  🚀</h1>
+                <p>Pantau kehadiran dan pengeluaran Radif Agungp selama 5 bulan PKL.</p>
+            </div>
+        </header>
+
+        <!-- Dashboard Summary -->
+        <section class="dashboard">
+            <h2 class="section-title">Ringkasan</h2>
+            <div class="summary-grid">
+                <!-- Attendance Stats -->
+                <div class="stat-card hadir">
+                    <div class="stat-icon"><i class="ph ph-check-circle"></i></div>
+                    <div class="stat-details">
+                        <h3>Hadir</h3>
+                        <p id="totalHadir" class="stat-value">0</p>
+                        <span class="stat-label">Hari</span>
+                    </div>
+                </div>
+                <div class="stat-card sakit">
+                    <div class="stat-icon"><i class="ph ph-thermometer"></i></div>
+                    <div class="stat-details">
+                        <h3>Sakit</h3>
+                        <p id="totalSakit" class="stat-value">0</p>
+                        <span class="stat-label">Hari</span>
+                    </div>
+                </div>
+                <div class="stat-card izin">
+                    <div class="stat-icon"><i class="ph ph-envelope-open"></i></div>
+                    <div class="stat-details">
+                        <h3>Izin</h3>
+                        <p id="totalIzin" class="stat-value">0</p>
+                        <span class="stat-label">Hari</span>
+                    </div>
+                </div>
+                <div class="stat-card alpa">
+                    <div class="stat-icon"><i class="ph ph-x-circle"></i></div>
+                    <div class="stat-details">
+                        <h3>Alpa</h3>
+                        <p id="totalAlpa" class="stat-value">0</p>
+                        <span class="stat-label">Hari</span>
+                    </div>
+                </div>
+                <!-- Expense Stat -->
+                <div class="stat-card expense-total">
+                    <div class="stat-icon"><i class="ph ph-wallet"></i></div>
+                    <div class="stat-details">
+                        <h3>Total Pengeluaran</h3>
+                        <p id="totalExpense" class="stat-value">Rp 0</p>
+                    </div>
+                </div>
+                <!-- Journal Stat -->
+                <div class="stat-card journal-total">
+                    <div class="stat-icon"><i class="ph ph-notebook"></i></div>
+                    <div class="stat-details">
+                        <h3>Jurnal Harian</h3>
+                        <p id="totalJournal" class="stat-value">0</p>
+                        <span class="stat-label">Catatan</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content Area: Two Columns -->
+        <main class="main-grid">
+            
+            <!-- Left Column: Attendance -->
+            <section class="module-card">
+                <div class="module-header">
+                    <h2><i class="ph ph-calendar-check"></i> Catat Kehadiran</h2>
+                </div>
+                
+                <form id="attendanceForm" class="input-form">
+                    <div class="form-group">
+                        <label for="attDate">Tanggal</label>
+                        <input type="date" id="attDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Status Kehadiran</label>
+                        <div class="radio-group">
+                            <label class="radio-btn hadir">
+                                <input type="radio" name="attStatus" value="Hadir" required checked>
+                                <span>Hadir</span>
+                            </label>
+                            <label class="radio-btn sakit">
+                                <input type="radio" name="attStatus" value="Sakit">
+                                <span>Sakit</span>
+                            </label>
+                            <label class="radio-btn izin">
+                                <input type="radio" name="attStatus" value="Izin">
+                                <span>Izin</span>
+                            </label>
+                            <label class="radio-btn alpa">
+                                <input type="radio" name="attStatus" value="Alpa">
+                                <span>Alpa</span>
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">Simpan Kehadiran</button>
+                </form>
+
+                <div class="history-list">
+                    <h3>Riwayat Terbaru</h3>
+                    <div id="attendanceHistory" class="history-items">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                    <button id="exportAttBtn" class="btn-secondary" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-file-pdf"></i> Export PDF</button>
+                    <button id="resetAttBtn" class="btn-danger" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-trash"></i> Hapus</button>
+                </div>
+            </section>
+
+            <!-- Right Column: Journal -->
+            <section class="module-card">
+                <div class="module-header">
+                    <h2><i class="ph ph-notebook"></i> Jurnal Harian PKL</h2>
+                </div>
+                
+                <form id="journalForm" class="input-form">
+                    <div class="form-group">
+                        <label for="journalDate">Tanggal</label>
+                        <input type="date" id="journalDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="journalActivity">Kegiatan yang Dilakukan</label>
+                        <textarea id="journalActivity" rows="3" placeholder="Contoh: Membuat laporan, belajar coding, meeting dengan tim..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Simpan Jurnal</button>
+                </form>
+
+                <div class="history-list">
+                    <h3>Riwayat Jurnal Terbaru</h3>
+                    <div id="journalHistory" class="history-items">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                    <button id="exportJournalBtn" class="btn-secondary" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-file-pdf"></i> Export PDF</button>
+                    <button id="resetJournalBtn" class="btn-danger" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-trash"></i> Hapus</button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Expense Section (Full Width) -->
+        <section class="module-card journal-section">
+            <div class="module-header">
+                <h2><i class="ph ph-money"></i> Catat Pengeluaran</h2>
+            </div>
+            
+            <form id="expenseForm" class="input-form journal-form-grid">
+                <div class="form-group">
+                    <label for="expDate">Tanggal</label>
+                    <input type="date" id="expDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="expName">Keterangan</label>
+                    <input type="text" id="expName" placeholder="Contoh: Makan siang, ongkos..." required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="expAmount">Nominal (Rp)</label>
+                    <div class="input-with-prefix">
+                        <span class="prefix">Rp</span>
+                        <input type="number" id="expAmount" placeholder="0" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn-primary">Simpan Pengeluaran</button>
+                </div>
+            </form>
+
+            <div class="history-list">
+                <h3>Riwayat Terbaru</h3>
+                <div id="expenseHistory" class="history-items">
+                    <!-- Items injected by JS -->
+                </div>
+            </div>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <button id="exportExpBtn" class="btn-secondary" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-file-pdf"></i> Export PDF</button>
+                <button id="resetExpBtn" class="btn-danger" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-trash"></i> Hapus</button>
+            </div>
+        </section>
+        
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Data berhasil disimpan!</div>
+
+    <script src="app.js"></script>
+</body>
+</html>
