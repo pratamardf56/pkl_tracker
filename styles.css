@@ -19,6 +19,13 @@
     --danger: #ef4444;
     --danger-hover: #dc2626;
 
+    /* Theme Specifics */
+    --input-bg: rgba(15, 23, 42, 0.6);
+    --item-bg: rgba(15, 23, 42, 0.4);
+    --calendar-invert: 1;
+    --bg-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,0.2) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,0.2) 0, transparent 50%);
+    --hover-bg: rgba(255, 255, 255, 0.05);
+
     /* Shadows & Effects */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -29,6 +36,28 @@
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-full: 9999px;
+}
+
+[data-theme="light"] {
+    --bg-main: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.7);
+    --border-color: rgba(0, 0, 0, 0.1);
+    
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+
+    --input-bg: rgba(255, 255, 255, 0.6);
+    --item-bg: rgba(255, 255, 255, 0.6);
+    --calendar-invert: 0;
+    --bg-image: radial-gradient(at 0% 0%, hsla(253,16%,90%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,90%,0.5) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,90%,0.5) 0, transparent 50%);
+    --hover-bg: rgba(0, 0, 0, 0.05);
+
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.theme-toggle:hover {
+    background: var(--hover-bg) !important;
 }
 
 * {
@@ -42,10 +71,7 @@ body {
     background-color: var(--bg-main);
     color: var(--text-main);
     min-height: 100vh;
-    background-image: 
-        radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-        radial-gradient(at 50% 0%, hsla(225,39%,30%,0.2) 0, transparent 50%), 
-        radial-gradient(at 100% 0%, hsla(339,49%,30%,0.2) 0, transparent 50%);
+    background-image: var(--bg-image);
     background-attachment: fixed;
     line-height: 1.5;
 }
@@ -64,9 +90,9 @@ header {
 }
 
 header h1 {
-    font-size: 2.5rem;
+    font-size: 2.5rem; 
     font-weight: 700;
-    background: linear-gradient(to right, #ff0000, #a78bfa);
+    background: linear-gradient(to right, #4a75d2, #a78bfa);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 0.5rem;
@@ -225,7 +251,7 @@ header p {
 
 textarea {
     width: 100%;
-    background: rgba(15, 23, 42, 0.6);
+    background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     padding: 0.75rem 1rem;
@@ -256,10 +282,11 @@ textarea:focus {
 }
 
 input[type="text"],
+input[type="password"],
 input[type="number"],
 input[type="date"] {
     width: 100%;
-    background: rgba(15, 23, 42, 0.6);
+    background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     padding: 0.75rem 1rem;
@@ -271,7 +298,7 @@ input[type="date"] {
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
+    filter: invert(var(--calendar-invert));
     cursor: pointer;
 }
 
@@ -318,7 +345,7 @@ input:focus {
     display: block;
     text-align: center;
     padding: 0.75rem;
-    background: rgba(15, 23, 42, 0.6);
+    background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     transition: all 0.2s ease;
@@ -335,7 +362,7 @@ input:focus {
 .radio-btn.alpa input:checked ~ span { background: rgba(239, 68, 68, 0.2); border-color: var(--color-alpa); color: var(--color-alpa); }
 
 .radio-btn:hover span {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--hover-bg);
 }
 
 /* Buttons */
@@ -435,16 +462,16 @@ input:focus {
     width: 6px;
 }
 .history-items::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--hover-bg);
     border-radius: var(--radius-full);
 }
 .history-items::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--border-color);
     border-radius: var(--radius-full);
 }
 
 .history-item {
-    background: rgba(15, 23, 42, 0.4);
+    background: var(--item-bg);
     border-radius: var(--radius-md);
     padding: 0.75rem 1rem;
     display: flex;
@@ -546,4 +573,76 @@ input:focus {
     color: var(--text-muted);
     font-size: 0.9rem;
     font-style: italic;
+}
+
+/* Login */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-main);
+    background-image: var(--bg-image);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 1rem;
+}
+
+.login-card {
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-color);
+    padding: 2.5rem;
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 400px;
+    box-shadow: var(--shadow-lg);
+    animation: fadeInDown 0.5s ease-out;
+}
+
+.login-card h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    background: linear-gradient(to right, #4a75d2, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.login-error {
+    color: var(--danger);
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    min-height: 1.2rem;
+}
+
+/* Make expense larger */
+.stat-card.expense-large {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+@media (min-width: 768px) {
+    .stat-card.expense-large {
+        grid-column: span 2;
+        justify-content: flex-start;
+    }
+}
+
+.stat-card.expense-large .stat-value {
+    font-size: 2.5rem;
+    color: var(--color-expense);
+}
+
+.stat-card.expense-large .stat-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 2rem;
 }

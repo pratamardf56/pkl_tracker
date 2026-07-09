@@ -16,10 +16,33 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app-container">
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-card" style="text-align: center;">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Radif" alt="Profil Radif" id="loginProfilePic" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 1rem auto; display: block; background: #c7d2fe; border: 3px solid var(--border-color); box-shadow: var(--shadow-md);">
+            <h2>Login</h2>
+            <form id="loginForm" style="text-align: left;">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="Masukkan username">
+                </div>
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="Masukkan password">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1.5rem;">Masuk</button>
+                <p id="loginError" class="login-error"></p>
+            </form>
+        </div>
+    </div>
+
+    <div class="app-container" style="display: none;">
         <!-- Header -->
         <header>
-            <div class="header-content">
+            <div class="header-content" style="position: relative;">
+                <button id="themeToggle" class="theme-toggle" title="Ubah Tema" style="position: absolute; right: 0; top: 0; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 0.5rem; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; transition: all 0.3s;">
+                    <i class="ph ph-sun" id="themeIcon" style="font-size: 1.25rem;"></i>
+                </button>
                 <h1>PKL Tracker  🚀</h1>
                 <p>Pantau kehadiran dan pengeluaran Radif Agungp selama 5 bulan PKL.</p>
             </div>
@@ -62,14 +85,6 @@
                         <span class="stat-label">Hari</span>
                     </div>
                 </div>
-                <!-- Expense Stat -->
-                <div class="stat-card expense-total">
-                    <div class="stat-icon"><i class="ph ph-wallet"></i></div>
-                    <div class="stat-details">
-                        <h3>Total Pengeluaran</h3>
-                        <p id="totalExpense" class="stat-value">Rp 0</p>
-                    </div>
-                </div>
                 <!-- Journal Stat -->
                 <div class="stat-card journal-total">
                     <div class="stat-icon"><i class="ph ph-notebook"></i></div>
@@ -77,6 +92,14 @@
                         <h3>Jurnal Harian</h3>
                         <p id="totalJournal" class="stat-value">0</p>
                         <span class="stat-label">Catatan</span>
+                    </div>
+                </div>
+                <!-- Expense Stat -->
+                <div class="stat-card expense-total expense-large">
+                    <div class="stat-icon"><i class="ph ph-wallet"></i></div>
+                    <div class="stat-details">
+                        <h3>Total Pengeluaran</h3>
+                        <p id="totalExpense" class="stat-value">Rp 0</p>
                     </div>
                 </div>
             </div>
@@ -132,74 +155,74 @@
                 </div>
             </section>
 
-            <!-- Right Column: Journal -->
+            <!-- Right Column: Expense -->
             <section class="module-card">
                 <div class="module-header">
-                    <h2><i class="ph ph-notebook"></i> Jurnal Harian PKL</h2>
+                    <h2><i class="ph ph-money"></i> Catat Pengeluaran</h2>
                 </div>
                 
-                <form id="journalForm" class="input-form">
+                <form id="expenseForm" class="input-form">
                     <div class="form-group">
-                        <label for="journalDate">Tanggal</label>
-                        <input type="date" id="journalDate" required>
+                        <label for="expDate">Tanggal</label>
+                        <input type="date" id="expDate" required>
                     </div>
                     <div class="form-group">
-                        <label for="journalActivity">Kegiatan yang Dilakukan</label>
-                        <textarea id="journalActivity" rows="3" placeholder="Contoh: Membuat laporan, belajar coding, meeting dengan tim..." required></textarea>
+                        <label for="expName">Keterangan</label>
+                        <input type="text" id="expName" placeholder="Contoh: Makan siang, ongkos..." required autocomplete="off">
                     </div>
-                    <button type="submit" class="btn-primary">Simpan Jurnal</button>
+                    <div class="form-group">
+                        <label for="expAmount">Nominal (Rp)</label>
+                        <div class="input-with-prefix">
+                            <span class="prefix">Rp</span>
+                            <input type="number" id="expAmount" placeholder="0" min="0" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn-primary">Simpan Pengeluaran</button>
+                    </div>
                 </form>
 
                 <div class="history-list">
-                    <h3>Riwayat Jurnal Terbaru</h3>
-                    <div id="journalHistory" class="history-items">
+                    <h3>Riwayat Terbaru</h3>
+                    <div id="expenseHistory" class="history-items">
                         <!-- Items injected by JS -->
                     </div>
                 </div>
                 <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
-                    <button id="exportJournalBtn" class="btn-secondary" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-file-pdf"></i> Export PDF</button>
-                    <button id="resetJournalBtn" class="btn-danger" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-trash"></i> Hapus</button>
+                    <button id="exportExpBtn" class="btn-secondary" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-file-pdf"></i> Export PDF</button>
+                    <button id="resetExpBtn" class="btn-danger" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-trash"></i> Hapus</button>
                 </div>
             </section>
 
         </main>
 
-        <!-- Expense Section (Full Width) -->
+        <!-- Journal Section (Full Width) -->
         <section class="module-card journal-section">
             <div class="module-header">
-                <h2><i class="ph ph-money"></i> Catat Pengeluaran</h2>
+                <h2><i class="ph ph-notebook"></i> Jurnal Harian PKL</h2>
             </div>
             
-            <form id="expenseForm" class="input-form journal-form-grid">
+            <form id="journalForm" class="input-form">
                 <div class="form-group">
-                    <label for="expDate">Tanggal</label>
-                    <input type="date" id="expDate" required>
+                    <label for="journalDate">Tanggal</label>
+                    <input type="date" id="journalDate" required>
                 </div>
                 <div class="form-group">
-                    <label for="expName">Keterangan</label>
-                    <input type="text" id="expName" placeholder="Contoh: Makan siang, ongkos..." required autocomplete="off">
+                    <label for="journalActivity">Kegiatan yang Dilakukan</label>
+                    <textarea id="journalActivity" rows="3" placeholder="Contoh: Membuat laporan, belajar coding, meeting dengan tim..." required></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="expAmount">Nominal (Rp)</label>
-                    <div class="input-with-prefix">
-                        <span class="prefix">Rp</span>
-                        <input type="number" id="expAmount" placeholder="0" min="0" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn-primary">Simpan Pengeluaran</button>
-                </div>
+                <button type="submit" class="btn-primary" style="align-self: flex-start; margin-top: 1rem;">Simpan Jurnal</button>
             </form>
 
-            <div class="history-list">
-                <h3>Riwayat Terbaru</h3>
-                <div id="expenseHistory" class="history-items">
+            <div class="history-list" style="margin-top: 2rem;">
+                <h3>Riwayat Jurnal Terbaru</h3>
+                <div id="journalHistory" class="history-items">
                     <!-- Items injected by JS -->
                 </div>
             </div>
-            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
-                <button id="exportExpBtn" class="btn-secondary" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-file-pdf"></i> Export PDF</button>
-                <button id="resetExpBtn" class="btn-danger" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-trash"></i> Hapus</button>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; max-width: 400px;">
+                <button id="exportJournalBtn" class="btn-secondary" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-file-pdf"></i> Export PDF</button>
+                <button id="resetJournalBtn" class="btn-danger" style="flex: 1; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;"><i class="ph ph-trash"></i> Hapus</button>
             </div>
         </section>
         

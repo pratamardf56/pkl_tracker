@@ -519,5 +519,61 @@ const init = () => {
     renderJournalHistory();
 };
 
-// Run init
-init();
+// Theme Toggle
+const themeToggleBtn = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const rootElement = document.documentElement;
+
+// Load saved theme
+const savedTheme = localStorage.getItem('pkl_theme') || 'dark';
+if (savedTheme === 'light') {
+    rootElement.setAttribute('data-theme', 'light');
+    themeIcon.classList.remove('ph-sun');
+    themeIcon.classList.add('ph-moon');
+}
+
+themeToggleBtn.addEventListener('click', () => {
+    const currentTheme = rootElement.getAttribute('data-theme');
+    if (currentTheme === 'light') {
+        rootElement.removeAttribute('data-theme');
+        localStorage.setItem('pkl_theme', 'dark');
+        themeIcon.classList.remove('ph-moon');
+        themeIcon.classList.add('ph-sun');
+    } else {
+        rootElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('pkl_theme', 'light');
+        themeIcon.classList.remove('ph-sun');
+        themeIcon.classList.add('ph-moon');
+    }
+});
+
+// Login Logic
+const loginOverlay = document.getElementById('loginOverlay');
+const loginForm = document.getElementById('loginForm');
+const loginError = document.getElementById('loginError');
+const appContainer = document.querySelector('.app-container');
+
+if (sessionStorage.getItem('isLoggedIn') === 'true') {
+    if (loginOverlay && appContainer) {
+        loginOverlay.style.display = 'none';
+        appContainer.style.display = 'block';
+    }
+    init();
+}
+
+if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const user = document.getElementById('username').value.trim().toLowerCase();
+        const pass = document.getElementById('password').value.trim().toLowerCase();
+
+        if (user === 'admin' && pass === 'radif') {
+            sessionStorage.setItem('isLoggedIn', 'true');
+            loginOverlay.style.display = 'none';
+            appContainer.style.display = 'block';
+            init();
+        } else {
+            loginError.textContent = 'Username atau password salah!';
+        }
+    });
+}
